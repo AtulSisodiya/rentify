@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rentify - Manage Properties</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Your Properties</h1>
+        <form id="propertyForm">
+            <label for="place">Place</label>
+            <input type="text" id="place" required>
+            <label for="area">Area</label>
+            <input type="text" id="area" required>
+            <label for="numberOfBedrooms">Number of Bedrooms</label>
+            <input type="number" id="numberOfBedrooms" required>
+            <label for="numberOfBathrooms">Number of Bathrooms</label>
+            <input type="number" id="numberOfBathrooms" required>
+            <label for="nearbyHospitals">Nearby Hospitals</label>
+            <input type="text" id="nearbyHospitals">
+            <label for="nearbyColleges">Nearby Colleges</label>
+            <input type="text" id="nearbyColleges">
+            <button type="submit">Add Property</button>
+        </form>
+        <h2>Your Properties</h2>
+        <div id="userPropertiesList"></div>
+    </div>
+
+    <script>
+        async function fetchUserProperties() {
+            const response = await fetch('/api/properties');
+            const properties = await response.json();
+            const propertiesList = document.getElementById('userPropertiesList');
+            propertiesList.innerHTML = properties.map(property => `
+                <div>
+                    <h3>${property.place}</h3>
+                    <p>Area: ${property.area}</p>
+                    <p>Bedrooms: ${property.numberOfBedrooms}</p>
+                    <p>Bathrooms: ${property.numberOfBathrooms}</p>
+                    <p>Nearby Hospitals: ${property.nearbyHospitals}</p>
+                    <p>Nearby Colleges: ${property.nearbyColleges}</p>
+                    <button onclick="editProperty(${property.id})">Edit</button>
+                    <button onclick="deleteProperty(${property.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('propertyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const place = document.getElementById('place').value;
+            const area = document.getElementById('area').value;
+            const numberOfBedrooms = document.getElementById('numberOfBedrooms').value;
+            const numberOfBathrooms = document.getElementById('numberOfBathrooms').value;
+            const nearbyHospitals = document.getElementById('nearbyHospitals').value;
+            const nearbyColleges = document.getElementById('nearbyColleges').value;
+            const response = await fetch('/api/properties', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ place, area, numberOfBedrooms, numberOfBathrooms, nearbyHospitals, nearbyColleges })
+            });
+            if (response.ok) {
+                fetchUserProperties();
+            } else {
+                alert('Failed to add property');
+            }
+        });
+
+        async function editProperty(id) {
+            // Implement edit functionality
+        }
+
+        async function deleteProperty(id) {
+            const response = await fetch(`/api/properties/${id}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                fetchUserProperties();
+            } else {
+                alert('Failed to delete property');
+            }
+        }
+
+        fetchUserProperties();
+    </script>
+</body>
+</html>

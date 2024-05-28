@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rentify - Register</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <form id="registerForm">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" required>
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" id="phoneNumber" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+            <label for="userType">I am a</label>
+            <select id="userType" required>
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+            </select>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ firstName, lastName, email, phoneNumber, password, userType })
+            });
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Registration failed');
+            }
+        });
+    </script>
+</body>
+</html>
